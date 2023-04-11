@@ -1,7 +1,10 @@
+from pprint import pprint
+
 import requests
 import pytest
+from tests.conftest import get_base_url
 
-url = "http://ec2-44-204-152-65.compute-1.amazonaws.com"
+url = get_base_url()
 
 
 class TestAwsInstanceValidation:
@@ -83,4 +86,12 @@ class TestAwsInstanceValidation:
 
         assert instance.network_interfaces[0].vpc.cidr_block == cidr_block
         assert instance.vpc.tags[4]['Key'] == vpc_tags
+
+    def test_s3_validation(self, connect_to_s3_recourse):
+        response = connect_to_s3_recourse.Bucket(
+            "cloudximage-imagestorebucketf57d958e-n28kaktvf5a"
+            )
+
+        pprint(response)
+
 
