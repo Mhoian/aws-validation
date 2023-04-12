@@ -1,18 +1,26 @@
-from pprint import pprint
-from random import choice
-
-from jsonschema import validate
-
-from tests.image_schema import valid_schema
-import requests
-import boto3
 import os
+import pprint
+
+import boto3
+import requests
+from jsonschema import validate
+import pymysql.cursors
+
 from tests.conftest import get_base_url
+from tests.image_schema import valid_schema
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 
 url = get_base_url()
+
+
+connection = pymysql.connect(host='localhost',
+                             port=3306,
+                             user='mysql_admin',
+                             password='password',
+                             database='cloudximages',
+                             cursorclass=pymysql.cursors.DictCursor)
 
 
 class TestRDSValidation:
@@ -57,4 +65,21 @@ class TestRDSValidation:
 
         assert response.status_code == 204
         assert response.text == ""
+
+    def test_get_data_from_db(self):
+        with connection.cursor() as cursor:
+            """
+            Result
+             {
+                'id': 1,
+                'last_modified': datetime.datetime(2023, 4, 12, 17, 24, 41),
+                'object_key': 'images/bc06f3cc-80ba-4260-8e62-50f3d9395e58-app-ui.png',
+                'object_size': 0,
+                'object_type': 'binary/octet-stream'
+             }
+            """
+            sql = "SELECT * FROM images"
+            cursor.execute(sql)
+            result = cursor.fetchone()
+            pprint.pprint(result)
 
