@@ -18,6 +18,14 @@ connection = pymysql.connect(host='localhost',
                              cursorclass=pymysql.cursors.DictCursor)
 
 
+connection = pymysql.connect(host='localhost',
+                             port=3306,
+                             user='mysql_admin',
+                             password='password',
+                             database='cloudximages',
+                             cursorclass=pymysql.cursors.DictCursor)
+
+
 class TestRDSValidation:
     def test_rds_instanse_validation(self):
         response = boto3.client("rds").describe_db_instances()
