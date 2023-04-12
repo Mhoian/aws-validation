@@ -1,4 +1,3 @@
-import os
 import pprint
 
 import boto3
@@ -9,10 +8,14 @@ import pymysql.cursors
 from tests.conftest import get_base_url
 from tests.image_schema import valid_schema
 
-AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-
 url = get_base_url()
+
+connection = pymysql.connect(host='localhost',
+                             port=3306,
+                             user='mysql_admin',
+                             password='password',
+                             database='cloudximages',
+                             cursorclass=pymysql.cursors.DictCursor)
 
 
 connection = pymysql.connect(host='localhost',
