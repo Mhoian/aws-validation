@@ -1,45 +1,42 @@
 import pprint
 
 import boto3
+import pymysql.cursors
 import requests
 from jsonschema import validate
-import pymysql.cursors
 
 from tests.conftest import get_base_url
 from tests.image_schema import valid_schema
 
 url = get_base_url()
 
-connection = pymysql.connect(host='localhost',
-                             port=3306,
-                             user='mysql_admin',
-                             password='password',
-                             database='cloudximages',
-                             cursorclass=pymysql.cursors.DictCursor)
-
-
-connection = pymysql.connect(host='localhost',
-                             port=3306,
-                             user='mysql_admin',
-                             password='password',
-                             database='cloudximages',
-                             cursorclass=pymysql.cursors.DictCursor)
+connection = pymysql.connect(
+    host="localhost",
+    port=3306,
+    user="mysql_admin",
+    password="password",
+    database="cloudximages",
+    cursorclass=pymysql.cursors.DictCursor,
+)
 
 
 class TestRDSValidation:
     def test_rds_instanse_validation(self):
         response = boto3.client("rds").describe_db_instances()
 
-        assert response['DBInstances'][0]['DBInstanceClass'] == "db.t3.micro"
-        assert not response['DBInstances'][0]['MultiAZ']
-        assert response['DBInstances'][0]['AllocatedStorage'] == 100
-        assert response['DBInstances'][0]['StorageType'] == "gp2"
-        assert not response['DBInstances'][0]['StorageEncrypted']
-        assert response['DBInstances'][0]['TagList'][3]['Key'] == "cloudx"
-        assert response['DBInstances'][0]['Engine'] == "mysql"
-        assert response['DBInstances'][0]['EngineVersion'] == "8.0.28"
-        assert response['DBInstances'][0]['DBSubnetGroup']['SubnetGroupStatus'] == "Complete"
-        assert response['DBInstances'][0]['DBInstanceStatus'] == "available"
+        assert response["DBInstances"][0]["DBInstanceClass"] == "db.t3.micro"
+        assert not response["DBInstances"][0]["MultiAZ"]
+        assert response["DBInstances"][0]["AllocatedStorage"] == 100
+        assert response["DBInstances"][0]["StorageType"] == "gp2"
+        assert not response["DBInstances"][0]["StorageEncrypted"]
+        assert response["DBInstances"][0]["TagList"][3]["Key"] == "cloudx"
+        assert response["DBInstances"][0]["Engine"] == "mysql"
+        assert response["DBInstances"][0]["EngineVersion"] == "8.0.28"
+        assert (
+            response["DBInstances"][0]["DBSubnetGroup"]["SubnetGroupStatus"]
+            == "Complete"
+        )
+        assert response["DBInstances"][0]["DBInstanceStatus"] == "available"
 
     def test_upload_file(self):
         headers = {
@@ -47,13 +44,17 @@ class TestRDSValidation:
             "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryVA3eImpwyV9Q2EG0",
         }
 
-        data = '------WebKitFormBoundaryVA3eImpwyV9Q2EG0\r\nContent-Disposition: form-data; name="upfile"; ' \
-               'filename="app-ui.png"' \
-               'Content-Type: ' \
-               'image/png\r\n\r\n\r' \
-               '------WebKitFormBoundaryVA3eImpwyV9Q2EG0--\r'
+        data = (
+            '------WebKitFormBoundaryVA3eImpwyV9Q2EG0\r\nContent-Disposition: form-data; name="upfile"; '
+            'filename="app-ui.png"'
+            "Content-Type: "
+            "image/png\r\n\r\n\r"
+            "------WebKitFormBoundaryVA3eImpwyV9Q2EG0--\r"
+        )
 
-        response = requests.post(url=url + "/api/image", headers=headers, data=data, verify=False)
+        response = requests.post(
+            url=url + "/api/image", headers=headers, data=data, verify=False
+        )
 
         assert response.status_code == 204
 
@@ -85,4 +86,3 @@ class TestRDSValidation:
             cursor.execute(sql)
             result = cursor.fetchone()
             pprint.pprint(result)
-
