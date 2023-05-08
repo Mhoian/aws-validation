@@ -10,15 +10,6 @@ from tests.image_schema import valid_schema
 
 url = get_base_url()
 
-connection = pymysql.connect(
-    host="localhost",
-    port=3306,
-    user="mysql_admin",
-    password="password",
-    database="cloudximages",
-    cursorclass=pymysql.cursors.DictCursor,
-)
-
 
 class TestRDSValidation:
     def test_rds_instanse_validation(self):
@@ -46,9 +37,9 @@ class TestRDSValidation:
 
         data = (
             '------WebKitFormBoundaryVA3eImpwyV9Q2EG0\r\nContent-Disposition: form-data; name="upfile"; '
-            'filename="app-ui.png"'
+            'filename="connect_to_db.jpg"'
             "Content-Type: "
-            "image/png\r\n\r\n\r"
+            "image/jpg\r\n\r\n\r"
             "------WebKitFormBoundaryVA3eImpwyV9Q2EG0--\r"
         )
 
@@ -71,6 +62,15 @@ class TestRDSValidation:
         assert response.text == ""
 
     def test_get_data_from_db(self):
+        connection = pymysql.connect(
+            host="localhost",
+            port=3306,
+            user="mysql_admin",
+            password="password",
+            database="cloudximages",
+            cursorclass=pymysql.cursors.DictCursor,
+        )
+
         with connection.cursor() as cursor:
             """
             Result

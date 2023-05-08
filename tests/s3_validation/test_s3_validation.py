@@ -14,14 +14,14 @@ class TestS3Validation:
     def test_upload_file(self):
         headers = {
             "Accept": "application/json",
-            "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryVA3eImpwyV9Q2EG0",
+            "Content-Type": "multipart/form-data; boundary=----WebKitFormBoundaryCpvG0Lar0Oalwvaj",
         }
 
-        data = '------WebKitFormBoundaryVA3eImpwyV9Q2EG0\r\nContent-Disposition: form-data; name="upfile"; ' \
-               'filename="app-ui.png"' \
+        data = '------WebKitFormBoundaryCpvG0Lar0Oalwvaj\r\nContent-Disposition: form-data; name="upfile"; ' \
+               'filename="connect_to_db.jpg"' \
                'Content-Type: ' \
-               'image/png\r\n\r\n\r' \
-               '------WebKitFormBoundaryVA3eImpwyV9Q2EG0--\r'
+               'image/jpg\r\n\r\n\r' \
+               '------WebKitFormBoundaryCpvG0Lar0Oalwvaj--\r'
 
         response = requests.post(url=url+"/api/image", headers=headers, data=data, verify=False)
 
@@ -37,7 +37,7 @@ class TestS3Validation:
         assert reposnse.status_code == 200
 
     def test_get_all_images(self):
-        response = requests.get(url=url)
+        response = requests.get(url=url + "/api/image")
 
         assert response.status_code == 200
         pprint(response.json())
